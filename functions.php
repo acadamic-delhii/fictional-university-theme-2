@@ -27,16 +27,27 @@ add_action('after_setup_theme', 'university_features');
 function university_post_types()
 {
 	register_post_type('event', array(
+		//'rewrite' => array('slug' => 'events'),
+		'has_archive' => true,
 		'public' => true,
 		'labels' => array(
-			'name' => 'Events', 
-			'add_new_item' => 'Add New Edit', 
-			'edit_item' => 'Edit Event', 
-			'all_items' => 'All Events', 
+			'name' => 'Events',
+			'add_new_item' => 'Add New Event',
+			'edit_item' => 'Edit Event',
+			'all_items' => 'All Events',
 			'singular_name' => 'Event'
-		), 
+		),
 		'menu_icon' => 'dashicons-calendar'
 	));
 }
 
 add_action('init', 'university_post_types');
+/*
+function custom_rewrite_rules_array($rules)
+{
+	$rules = array('([^/]*)/([^/]*)/?$' => 'index.php?post_type=post&name=$matches[2]&meta=$matches[1]') + $rules;
+	return $rules;
+}
+
+add_filter('rewrite_rules_array', 'custom_rewrite_rules_array');
+*/
