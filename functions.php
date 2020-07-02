@@ -29,7 +29,7 @@ function university_post_types()
 	register_post_type('event', array(
 		'show_in_rest' => true, 
 		'supports' => array('title', 'editor', 'excerpt'), 
-		//'rewrite' => array('slug' => 'events'),
+		'rewrite' => array('slug' => 'events'),
 		'has_archive' => true,
 		'public' => true,
 		'labels' => array(
@@ -44,12 +44,3 @@ function university_post_types()
 }
 
 add_action('init', 'university_post_types');
-/*
-function custom_rewrite_rules_array($rules)
-{
-	$rules = array('([^/]*)/([^/]*)/?$' => 'index.php?post_type=post&name=$matches[2]&meta=$matches[1]') + $rules;
-	return $rules;
-}
-
-add_filter('rewrite_rules_array', 'custom_rewrite_rules_array');
-*/
