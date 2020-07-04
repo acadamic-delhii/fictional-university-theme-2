@@ -41,12 +41,34 @@ function university_post_types()
 		),
 		'menu_icon' => 'dashicons-calendar'
 	));
+
+	register_post_type('program', array(
+		'show_in_rest' => true,
+		'supports' => array('title', 'editor'),
+		'rewrite' => array('slug' => 'programs'),
+		'has_archive' => true,
+		'public' => true,
+		'labels' => array(
+			'name' => 'Programs',
+			'add_new_item' => 'Add New Program',
+			'edit_item' => 'Edit Program',
+			'all_items' => 'All Programs',
+			'singular_name' => 'Program'
+		),
+		'menu_icon' => 'dashicons-awards'
+	));
 }
 
 add_action('init', 'university_post_types');
 
 function university_adjust_queries($query)
 {
+	if (!is_admin() and is_post_type_archive('program') and $query->is_main_query()) {
+		$query->set('orderby', 'title');
+		$query->set('order', 'ASC');
+		$query->set('post_per_page', -1);
+	}
+
 	if (!is_admin() and is_post_type_archive('event') and $query->is_main_query()) {
 		$today = date('Ymd');
 
