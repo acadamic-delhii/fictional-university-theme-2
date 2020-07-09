@@ -2,17 +2,8 @@
 get_header();
 while (have_posts()) {
     the_post();
+    page_banner(null);
 ?>
-
-    <div class="page-banner">
-        <div class="page-banner__bg-image" style="background-image: url(<?php echo get_theme_file_uri('images/ocean.jpg'); ?>);"></div>
-        <div class="page-banner__content container container--narrow">
-            <h1 class="page-banner__title"><?php the_title(); ?></h1>
-            <div class="page-banner__intro">
-                <p>DON'T FORGET TO REPLACE ME LATER</p>
-            </div>
-        </div>
-    </div>
 
     <div class="container container--narrow page-section">
         <?php
@@ -33,7 +24,7 @@ while (have_posts()) {
         if ($parentId or $childPages) {
         ?>
             <div class="page-links">
-                <h2 class="page-links__title"><a href="<?php echo get_permalink($parentId)?>"><?php echo get_the_title($parentId); ?></a></h2>
+                <h2 class="page-links__title"><a href="<?php echo get_permalink($parentId) ?>"><?php echo get_the_title($parentId); ?></a></h2>
                 <ul class="min-list">
                     <?php
                     if ($parentId) {
