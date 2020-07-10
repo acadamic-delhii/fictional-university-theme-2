@@ -1,6 +1,6 @@
 <?php
 
-function page_banner($args)
+function page_banner($args = NULL)
 {
 	if (!$args['title']) {
 		$args['title'] = get_the_title();
