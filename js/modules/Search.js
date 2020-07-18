@@ -1,17 +1,17 @@
 class Search {
     constructor() {
-        this.openButton = document.querySelector(".js-search-trigger");
+        this.openButtons = document.querySelectorAll(".js-search-trigger");
         this.closeButton = document.querySelector(".search-overlay__close");
         this.searchOverlay = document.querySelector(".search-overlay");
         this.event();
     }
 
     event() {
-        this.openButton.addEventListener("click", () => this.openOverlay());
+        this.openButtons.forEach(el => el.addEventListener("click", e => this.openOverlay(e)));
         this.closeButton.addEventListener("click", () => this.closeOverlay());
     }
 
-    openOverlay() {
+    openOverlay(e) {
         this.searchOverlay.classList.add("search-overlay--active");
     }
 
