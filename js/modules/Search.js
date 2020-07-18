@@ -3,14 +3,22 @@ class Search {
         this.openButtons = document.querySelectorAll(".js-search-trigger");
         this.closeButton = document.querySelector(".search-overlay__close");
         this.searchOverlay = document.querySelector(".search-overlay");
+        this.searchField = document.querySelector("#search-term");
         this.event();
         this.isOverlayOpen = false;
+        this.typingTimer;
     }
 
     event() {
         this.openButtons.forEach(el => el.addEventListener("click", e => this.openOverlay(e)));
         this.closeButton.addEventListener("click", () => this.closeOverlay());
         document.addEventListener("keydown", e => this.keyPressDispatcher(e));
+        this.searchField.addEventListener("keydown", () => this.typingLogic());
+    }
+
+    typingLogic() {
+        clearTimeout(this.typingTimer);
+        this.typingTimer = setTimeout(() => {console.log("test")}, 2000);
     }
 
     keyPressDispatcher(e) {
