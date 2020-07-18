@@ -1,11 +1,14 @@
 class Search {
     constructor() {
+        this.resultsDiv = document.querySelector("#search-overlay__results");
         this.openButtons = document.querySelectorAll(".js-search-trigger");
         this.closeButton = document.querySelector(".search-overlay__close");
         this.searchOverlay = document.querySelector(".search-overlay");
         this.searchField = document.querySelector("#search-term");
         this.event();
         this.isOverlayOpen = false;
+        this.isSpinnerVisible = false;
+        this.previousValue;
         this.typingTimer;
     }
 
@@ -13,18 +16,37 @@ class Search {
         this.openButtons.forEach(el => el.addEventListener("click", e => this.openOverlay(e)));
         this.closeButton.addEventListener("click", () => this.closeOverlay());
         document.addEventListener("keydown", e => this.keyPressDispatcher(e));
-        this.searchField.addEventListener("keydown", () => this.typingLogic());
+        this.searchField.addEventListener("keyup", () => this.typingLogic());
     }
 
     typingLogic() {
-        clearTimeout(this.typingTimer);
-        this.typingTimer = setTimeout(() => {console.log("test")}, 2000);
+        if (this.previousValue != this.searchField.value) {
+            clearTimeout(this.typingTimer);
+
+            if (this.searchField.value) {
+                if (!this.isSpinnerVisible) {
+                    this.resultsDiv.innerHTML = '<div class="spinner-loader"></div>';
+                    this.isSpinnerVisible = true;
+                }
+                this.typingTimer = setTimeout(() => this.getResults(), 2000);
+            } else {
+                this.resultsDiv.innerHTML = '';
+                this.isSpinnerVisible = false;
+            }
+        }
+
+        this.previousValue = this.searchField.value;
+    }
+
+    getResults() {
+        this.resultsDiv.innerHTML = "Imagine real search results here...";
+        this.isSpinnerVisible = false;
     }
 
     keyPressDispatcher(e) {
         switch (e.keyCode) {
             case 83:
-                if (!this.isOverlayOpen) {
+                if (!this.isOverlayOpen && !querySelector("input, textarea").hasFocus()) {
                     this.openOverlay();
                 }
                 break;
