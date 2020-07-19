@@ -43,7 +43,12 @@ class Search {
         fetch('http://localhost/fictional-university-2/wp-json/wp/v2/posts?search=' + this.searchField.value)
             .then(res => res.json())
             .then((posts) => {
-                alert(posts[0].title.rendered);
+                this.resultsDiv.innerHTML = `
+                <h2 class="search-overlay__section-title">General Information</h2>
+                <ul class="link-list min-list">
+                    ${posts.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
+                </ul>
+                `
             })
             .catch(err => console.error(err));
         this.isSpinnerVisible = false;
