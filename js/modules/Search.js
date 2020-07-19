@@ -39,7 +39,13 @@ class Search {
     }
 
     getResults() {
-        this.resultsDiv.innerHTML = "Imagine real search results here...";
+
+        fetch('http://localhost/fictional-university-2/wp-json/wp/v2/posts?search=' + this.searchField.value)
+            .then(res => res.json())
+            .then((posts) => {
+                alert(posts[0].title.rendered);
+            })
+            .catch(err => console.error(err));
         this.isSpinnerVisible = false;
     }
 
