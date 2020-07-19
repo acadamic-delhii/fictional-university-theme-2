@@ -1,5 +1,6 @@
 class Search {
     constructor() {
+        this.addSearchHTML();
         this.resultsDiv = document.querySelector("#search-overlay__results");
         this.openButtons = document.querySelectorAll(".js-search-trigger");
         this.closeButton = document.querySelector(".search-overlay__close");
@@ -28,7 +29,7 @@ class Search {
                     this.resultsDiv.innerHTML = '<div class="spinner-loader"></div>';
                     this.isSpinnerVisible = true;
                 }
-                this.typingTimer = setTimeout(() => this.getResults(), 2000);
+                this.typingTimer = setTimeout(() => this.getResults(), 750);
             } else {
                 this.resultsDiv.innerHTML = '';
                 this.isSpinnerVisible = false;
@@ -57,7 +58,7 @@ class Search {
     keyPressDispatcher(e) {
         switch (e.keyCode) {
             case 83:
-                if (!this.isOverlayOpen && !querySelector("input, textarea").hasFocus()) {
+                if (!this.isOverlayOpen && document.querySelector("input, textarea") !== document.activeElement) {
                     this.openOverlay();
                 }
                 break;
@@ -74,6 +75,8 @@ class Search {
     openOverlay(e) {
         this.searchOverlay.classList.add("search-overlay--active");
         document.querySelector("body").classList.add("body-no-scroll");
+        this.searchField.value = '';
+        setTimeout(() => this.searchField.focus(), 301);
         this.isOverlayOpen = true;
     }
 
@@ -81,6 +84,25 @@ class Search {
         this.searchOverlay.classList.remove("search-overlay--active");
         document.querySelector("body").classList.remove("body-no-scroll");
         this.isOverlayOpen = false;
+    }
+
+    addSearchHTML() {
+        document.body.innerHTML += ('beforeend', `
+        <div class="search-overlay">
+  	        <div class="search-overlay__top">
+  	        	<div class="container">
+  	        		<i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
+  	        		<input autocomplete="off" type="text" class="search-term" placeholder="What are you looking for?" id="search-term">
+  	        		<i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
+  	        	</div>
+  	        </div>
+  	        <div class="container">
+  	        	<div id="search-overlay__results">
+  	        		test
+  	        	</div>
+  	        </div>
+        </div>
+        `);
     }
 }
 
