@@ -39,19 +39,19 @@ class Search {
     }
 
     getResults() {
-
-        fetch('http://localhost/fictional-university-2/wp-json/wp/v2/posts?search=' + this.searchField.value)
+        fetch(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.value)
             .then(res => res.json())
             .then((posts) => {
                 this.resultsDiv.innerHTML = `
                 <h2 class="search-overlay__section-title">General Information</h2>
-                <ul class="link-list min-list">
+                ${posts.length ? '<ul class="link-list min-list">' : '<p>No general information that matches the search.</p>'}
                     ${posts.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
-                </ul>
-                `
+                ${posts.length ? '</ul>' : ''}
+                `;
+
+                this.isSpinnerVisible = false;
             })
             .catch(err => console.error(err));
-        this.isSpinnerVisible = false;
     }
 
     keyPressDispatcher(e) {

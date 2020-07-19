@@ -43,6 +43,10 @@ function university_files()
 		wp_enqueue_script('main-js', get_theme_file_uri('/bundled-assets/scripts.291f4fbd3120f33dcc5a.js'), NULL, '1.0.0', true);
 		wp_enqueue_style('main-style', get_theme_file_uri('/bundled-assets/styles.291f4fbd3120f33dcc5a.css'));
 	}
+
+	wp_localize_script('main-js', 'universityData', array(
+		'root_url' => get_site_url()
+	));
 }
 
 add_action('wp_enqueue_scripts', 'university_files');
