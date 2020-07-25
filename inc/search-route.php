@@ -33,7 +33,7 @@ function universitySearchResults($data)
             case 'page':
                 array_push($results['generalInfo'], array(
                     'title' => get_the_title(),
-                    'permalink' => get_the_permalink(), 
+                    'permalink' => get_the_permalink(),
                     'postType' => get_post_type(),
                     'authorName' => get_the_author()
                 ));
@@ -41,7 +41,7 @@ function universitySearchResults($data)
             case 'professor':
                 array_push($results['professors'], array(
                     'title' => get_the_title(),
-                    'permalink' => get_the_permalink(), 
+                    'permalink' => get_the_permalink(),
                     'image' => get_the_post_thumbnail_url(0, 'professorLandscape')
                 ));
                 break;
@@ -62,9 +62,9 @@ function universitySearchResults($data)
 
                 array_push($results['events'], array(
                     'title' => get_the_title(),
-                    'permalink' => get_the_permalink(), 
-                    'month' => $eventDate->format('M'), 
-                    'day' => $eventDate->format('d'), 
+                    'permalink' => get_the_permalink(),
+                    'month' => $eventDate->format('M'),
+                    'day' => $eventDate->format('d'),
                     'description' => $description
                 ));
                 break;
@@ -78,6 +78,39 @@ function universitySearchResults($data)
                 break;
         }
     }
+
+    wp_reset_postdata();
+
+    $programRelationshipQuery = new WP_Query(array(
+        'post_type' => 'professor',
+        'meta_query' => array(
+            array(
+                'key' => 'related_programs',
+                'compare' => 'LIKE',
+                'value' => '"48"'
+            )
+        )
+    ));
+
+    while ($programRelationshipQuery->have_posts()) {
+        $programRelationshipQuery->the_post();
+
+        switch (get_post_type()) {
+            case 'professor':
+                array_push($results['professors'], array(
+                    'title' => get_the_title(),
+                    'permalink' => get_the_permalink(),
+                    'image' => get_the_post_thumbnail_url(0, 'professorLandscape')
+                ));
+                break;
+            default:
+                break;
+        }
+    }
+
+    $results['professors'] = array_values(array_unique($results['professors'], SORT_REGULAR));
+
+    wp_reset_postdata();
 
     return $results;
 }
