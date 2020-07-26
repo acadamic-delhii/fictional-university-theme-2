@@ -18,7 +18,6 @@ page_banner(
             <div class="marker" data-lat="<?php echo $mapLocation['lat']; ?>" data-lng="<?php echo $mapLocation['lng']; ?>"></div>
         <?php
         }
-        echo paginate_links();
         ?>
     </div>
 </div>

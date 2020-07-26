@@ -13,38 +13,40 @@ while (have_posts()) {
         </div>
 
         <div class="generic-content">
-            <?php the_field('main_body_content'); ?>
+            <?php the_content(); ?>
+        </div>
+
+        <div class="acf-map">
+            <?php
+            $mapLocation = get_field('map_location');
+            ?>
+            <div class="marker" data-lat="<?php echo $mapLocation['lat']; ?>" data-lng="<?php echo $mapLocation['lng']; ?>"></div>
         </div>
 
         <?php
-        $relatedProfessors = new WP_Query(array(
+        $relatedPrograms = new WP_Query(array(
             'posts_per_page' => -1,
-            'post_type' => 'professor',
+            'post_type' => 'program',
             'orderby' => 'title',
             'order' => 'ASC',
             'meta_query' => array(
                 array(
-                    'key' => 'related_programs',
+                    'key' => 'related_campus',
                     'compare' => 'LIKE',
                     'value' => '"' . get_the_ID() . '"'
                 )
             )
         ));
 
-        if ($relatedProfessors->have_posts()) {
+        if ($relatedPrograms->have_posts()) {
             echo '<hr class="section-break">';
-            echo '<h2 class="headline headline--medium">' . get_the_title() . ' Professors</h2>';
+            echo '<h2 class="headline headline--medium">Programs Available At This Campus</h2>';
 
-            echo '<ul class="professor-cards">';
-            while ($relatedProfessors->have_posts()) {
-                $relatedProfessors->the_post();
+            echo '<ul class="link-list min-list">';
+            while ($relatedPrograms->have_posts()) {
+                $relatedPrograms->the_post();
         ?>
-                <li class="professor-card__list-item">
-                    <a class="professor-card" href="<?php the_permalink(); ?>">
-                        <img class="professor-card__image" src="<?php the_post_thumbnail_url('professorLandscape'); ?>">
-                        <span class="professor-card__name"><?php the_title(); ?></span>
-                    </a>
-                </li>
+                <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
         <?php
             }
             echo '</ul>';
@@ -85,22 +87,6 @@ while (have_posts()) {
             }
         }
         wp_reset_postdata();
-
-        $relatedCampuses = get_field('related_campus');
-
-        if ($relatedCampuses) {
-            echo '<hr class="section-break">';
-            echo '<h2 class="headline headline--medium">' . get_the_title() . ' is Available At These Campuses:</h2>';
-
-            echo '<ul class="link-list min-list">';
-            foreach ($relatedCampuses as $campus) {
-        ?>
-                <li><a href="<?php echo get_the_permalink($campus); ?>"><?php echo get_the_title($campus); ?></a></li>
-        <?php
-            }
-
-            echo '</ul>';
-        }
         ?>
     </div>
 <?php
