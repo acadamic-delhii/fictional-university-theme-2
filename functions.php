@@ -134,6 +134,10 @@ add_action('init', 'university_post_types');
 
 function university_adjust_queries($query)
 {
+	if (!is_admin() and is_post_type_archive('campus') and $query->is_main_query()) {
+		$query->set('post_per_page', -1);
+	}
+
 	if (!is_admin() and is_post_type_archive('program') and $query->is_main_query()) {
 		$query->set('orderby', 'title');
 		$query->set('order', 'ASC');
