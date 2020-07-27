@@ -118,6 +118,7 @@ class Search {
     }
 
     openOverlay(e) {
+        e.preventDefault();
         this.searchOverlay.classList.add("search-overlay--active");
         document.querySelector("body").classList.add("body-no-scroll");
         this.searchField.value = '';
