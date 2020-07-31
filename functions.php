@@ -68,6 +68,8 @@ add_action('after_setup_theme', 'university_features');
 function university_post_types()
 {
 	register_post_type('campus', array(
+		'capability_type' => 'campus',
+		'map_meta_cap' => true,
 		'show_in_rest' => true,
 		'supports' => array('title', 'editor', 'excerpt'),
 		'rewrite' => array('slug' => 'campuses'),
@@ -84,6 +86,8 @@ function university_post_types()
 	));
 
 	register_post_type('event', array(
+		'capability_type' => 'event',
+		'map_meta_cap' => true,
 		'show_in_rest' => true,
 		'supports' => array('title', 'editor', 'excerpt'),
 		'rewrite' => array('slug' => 'events'),
@@ -163,7 +167,8 @@ function university_adjust_queries($query)
 
 add_action('pre_get_posts', 'university_adjust_queries');
 
-function universityMapKey($api) {
+function universityMapKey($api)
+{
 	$api['key'] = 'AIzaSyBvA8c9UX2Bd74HcbWKG_VqeiQ8m2gVYig';
 	return $api;
 }
