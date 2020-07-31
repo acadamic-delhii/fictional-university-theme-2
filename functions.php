@@ -174,10 +174,11 @@ function universityMapKey($api)
 }
 add_filter('acf/fields/google_map/api', 'universityMapKey');
 
-function redirectSubscribersToHome() {
+function redirectSubscribersToHome()
+{
 	$currentUser = wp_get_current_user();
 
-	if (count($currentUser->roles) == 1 AND $currentUser->roles[0] == 'subscriber') {
+	if (count($currentUser->roles) == 1 and $currentUser->roles[0] == 'subscriber') {
 		wp_redirect(site_url('/'));
 		exit;
 	}
@@ -185,12 +186,40 @@ function redirectSubscribersToHome() {
 
 add_action('admin_init', 'redirectSubscribersToHome');
 
-function HideAdminBarForSubscribers() {
+function HideAdminBarForSubscribers()
+{
 	$currentUser = wp_get_current_user();
 
-	if (count($currentUser->roles) == 1 AND $currentUser->roles[0] == 'subscriber') {
+	if (count($currentUser->roles) == 1 and $currentUser->roles[0] == 'subscriber') {
 		show_admin_bar(false);
 	}
 }
 
 add_action('wp_loaded', 'HideAdminBarForSubscribers');
+
+function ourHeaderURL()
+{
+	return esc_url(site_url('/'));
+}
+
+add_filter('login_headerurl', 'ourHeaderURL');
+
+function ourLoginCSS()
+{
+	if (strstr($_SERVER['SERVER_NAME'], 'localhost')) {
+		wp_enqueue_script('main-js', 'http://localhost:3000/bundled.js', NULL, '1.0.0', true);
+	} else {
+		wp_enqueue_script('vendors-js', get_theme_file_uri('/bundled-assets/vendors~scripts.8c97d901916ad616a264.js'), NULL, '1.0.0', true);
+		wp_enqueue_script('main-js', get_theme_file_uri('/bundled-assets/scripts.291f4fbd3120f33dcc5a.js'), NULL, '1.0.0', true);
+		wp_enqueue_style('main-style', get_theme_file_uri('/bundled-assets/styles.291f4fbd3120f33dcc5a.css'));
+	}
+}
+
+add_action('login_enqueue_scripts', 'ourLoginCSS');
+
+function ourLoginTitle()
+{
+	return get_bloginfo('name');
+}
+
+add_filter('login_headertitle', 'ourLoginTitle');
