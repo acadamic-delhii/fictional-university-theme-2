@@ -173,3 +173,24 @@ function universityMapKey($api)
 	return $api;
 }
 add_filter('acf/fields/google_map/api', 'universityMapKey');
+
+function redirectSubscribersToHome() {
+	$currentUser = wp_get_current_user();
+
+	if (count($currentUser->roles) == 1 AND $currentUser->roles[0] == 'subscriber') {
+		wp_redirect(site_url('/'));
+		exit;
+	}
+}
+
+add_action('admin_init', 'redirectSubscribersToHome');
+
+function HideAdminBarForSubscribers() {
+	$currentUser = wp_get_current_user();
+
+	if (count($currentUser->roles) == 1 AND $currentUser->roles[0] == 'subscriber') {
+		show_admin_bar(false);
+	}
+}
+
+add_action('wp_loaded', 'HideAdminBarForSubscribers');
