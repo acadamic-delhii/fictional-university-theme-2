@@ -7,6 +7,7 @@ class MyNotes {
         document.querySelectorAll('.edit-note').forEach(el => el.addEventListener("click", e => this.editNote(e)));
         document.querySelectorAll('.delete-note').forEach(el => el.addEventListener("click", e => this.deleteNote(e)));
         document.querySelectorAll('.update-note').forEach(el => el.addEventListener("click", e => this.updateNote(e)));
+        document.querySelectorAll('.submit-note').forEach(el => el.addEventListener("click", e => this.createNote(e)));
     }
 
     editNote(e) {
@@ -62,7 +63,7 @@ class MyNotes {
         var url = universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.getAttribute('data-id');
         var ourUpdatedPost = {
             title: thisNote.querySelector('.note-title-field').value,
-            content: thisNote.querySelector('.note-body-field').value,
+            content: thisNote.querySelector('.note-body-field').value
         }
 
         fetch(url, {
@@ -74,6 +75,37 @@ class MyNotes {
             body: JSON.stringify(ourUpdatedPost)
         }).then(resp => {
             this.makeNoteReadonly(thisNote);
+            console.log("post success");
+            console.log(resp);
+        }).catch(err => {
+            console.log("post failed");
+            console.log(err)
+        });
+    }
+
+    createNote(e) {
+        var newNoteTilte = document.querySelector('.new-note-title').value;
+        var newNoteContent = document.querySelector('.new-note-body').value;
+        var url = universityData.root_url + '/wp-json/wp/v2/note/';
+        var ourNewPost = {
+            title: newNoteTilte,
+            content: newNoteContent,
+            status: 'publish'
+        }
+        
+        fetch(url, {
+            headers: {
+                'X-WP-Nonce': universityData.nonce, 
+                'Content-Type': 'application/json'
+            },
+            method: 'POST', 
+            body: JSON.stringify(ourNewPost)
+        }).then(resp => {
+            document.querySelector('.new-note-title').value = "";
+            document.querySelector('.new-note-body').value = "";
+            document.querySelector('#my-notes').insertAdjacentHTML("afterbegin", `
+            <li>test li el</li>
+            `);
             console.log("post success");
             console.log(resp);
         }).catch(err => {
