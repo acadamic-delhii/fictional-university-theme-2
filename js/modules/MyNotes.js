@@ -68,10 +68,10 @@ class MyNotes {
 
         fetch(url, {
             headers: {
-                'X-WP-Nonce': universityData.nonce, 
+                'X-WP-Nonce': universityData.nonce,
                 'Content-Type': 'application/json'
             },
-            method: 'POST', 
+            method: 'POST',
             body: JSON.stringify(ourUpdatedPost)
         }).then(resp => {
             this.makeNoteReadonly(thisNote);
@@ -92,22 +92,34 @@ class MyNotes {
             content: newNoteContent,
             status: 'publish'
         }
-        
+
         fetch(url, {
             headers: {
-                'X-WP-Nonce': universityData.nonce, 
+                'X-WP-Nonce': universityData.nonce,
                 'Content-Type': 'application/json'
             },
-            method: 'POST', 
+            method: 'POST',
             body: JSON.stringify(ourNewPost)
-        }).then(resp => {
+        })
+        .then(resp => resp.json() )
+        .then(results => {
+            //console.log("breakpoint 1");
+            //console.log(results);
+            //console.log(results.id);
+            //console.log("breakpoint 2");
             document.querySelector('.new-note-title').value = "";
             document.querySelector('.new-note-body').value = "";
             document.querySelector('#my-notes').insertAdjacentHTML("afterbegin", `
-            <li>test li el</li>
+                <li data-id="${results.id}">
+                    <input readonly class="note-title-field" value="${results.title.raw}">
+                    <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
+                    <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
+                    <textarea readonly class="note-body-field">${results.content.raw}</textarea>
+                    <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
+                </li>
             `);
             console.log("post success");
-            console.log(resp);
+            console.log(results);
         }).catch(err => {
             console.log("post failed");
             console.log(err)

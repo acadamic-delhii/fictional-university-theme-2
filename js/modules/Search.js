@@ -103,8 +103,9 @@ class Search {
     keyPressDispatcher(e) {
         switch (e.keyCode) {
             case 83:
-                if (!this.isOverlayOpen && document.querySelector("input, textarea") !== document.activeElement) {
-                    this.openOverlay();
+                //if (!this.isOverlayOpen && document.querySelector("input, textarea") !== document.activeElement) {
+                if (!this.isOverlayOpen && document.activeElement.tagName != "INPUT" && document.activeElement.tagName != "TEXTAREA") {
+                    this.openOverlay(e);
                 }
                 break;
             case 27:
