@@ -1,17 +1,41 @@
 class MyNotes {
     constructor() {
+        this.myNotes = document.querySelector("#my-notes");
         this.events();
     }
 
     events() {
-        document.querySelectorAll('.edit-note').forEach(el => el.addEventListener("click", e => this.editNote(e)));
-        document.querySelectorAll('.delete-note').forEach(el => el.addEventListener("click", e => this.deleteNote(e)));
-        document.querySelectorAll('.update-note').forEach(el => el.addEventListener("click", e => this.updateNote(e)));
+        //document.querySelectorAll('.edit-note').forEach(el => el.addEventListener("click", e => this.editNote(e)));
+        //document.querySelectorAll('.delete-note').forEach(el => el.addEventListener("click", e => this.deleteNote(e)));
+        //document.querySelectorAll('.update-note').forEach(el => el.addEventListener("click", e => this.updateNote(e)));
+        this.myNotes.addEventListener("click", e => this.handleClickEvents(e));
         document.querySelectorAll('.submit-note').forEach(el => el.addEventListener("click", e => this.createNote(e)));
     }
 
+    handleClickEvents(e) {
+        //console.log(e.target.classList)
+        if (e.target.classList.contains("edit-note") || e.target.classList.contains("fa-pencil") || e.target.classList.contains("fa-times")) {
+            this.editNote(e);
+        } else if (e.target.classList.contains("delete-note") || e.target.classList.contains("fa-trash-o")) {
+            this.deleteNote(e);
+        } else if (e.target.classList.contains("update-note") || e.target.classList.contains("fa-arrow-right")) {
+            this.updateNote(e);
+        }
+    }
+
+    findNearestParentLI(e) {
+        var thisNote = e.target;
+
+        while (thisNote.tagName != "LI") {
+            thisNote = thisNote.parentNode;
+        }
+
+        return thisNote;
+    }
+
     editNote(e) {
-        var thisNote = e.target.parentNode;
+        var thisNote = this.findNearestParentLI(e);
+
         if (thisNote.dataset.state == "editable") {
             this.makeNoteReadonly(thisNote);
         } else {
@@ -40,7 +64,8 @@ class MyNotes {
     }
 
     deleteNote(e) {
-        var thisNote = e.target.parentNode;
+        var thisNote = this.findNearestParentLI(e);
+
         var url = universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.getAttribute('data-id');
 
         fetch(url, {
@@ -49,7 +74,14 @@ class MyNotes {
             },
             method: 'DELETE'
         }).then(resp => {
-            thisNote.classList.add('fade-out');
+            //thisNote.classList.add('fade-out');
+            thisNote.style.height = `${thisNote.offsetHeight}px`;
+            setTimeout(function () {
+                thisNote.classList.add("fade-out");
+            }, 20);
+            setTimeout(function () {
+                thisNote.remove();
+            }, 401);
             console.log("delete success");
             console.log(resp);
         }).catch(err => {
@@ -59,7 +91,8 @@ class MyNotes {
     }
 
     updateNote(e) {
-        var thisNote = e.target.parentNode;
+        var thisNote = this.findNearestParentLI(e);
+
         var url = universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.getAttribute('data-id');
         var ourUpdatedPost = {
             title: thisNote.querySelector('.note-title-field').value,
@@ -101,29 +134,46 @@ class MyNotes {
             method: 'POST',
             body: JSON.stringify(ourNewPost)
         })
-        .then(resp => resp.json() )
-        .then(results => {
-            //console.log("breakpoint 1");
-            //console.log(results);
-            //console.log(results.id);
-            //console.log("breakpoint 2");
-            document.querySelector('.new-note-title').value = "";
-            document.querySelector('.new-note-body').value = "";
-            document.querySelector('#my-notes').insertAdjacentHTML("afterbegin", `
-                <li data-id="${results.id}">
+            .then(resp => resp.json())
+            .then(results => {
+                //console.log("breakpoint 1");
+                //console.log(results);
+                //console.log(results.id);
+                //console.log("breakpoint 2");
+                document.querySelector('.new-note-title').value = "";
+                document.querySelector('.new-note-body').value = "";
+                document.querySelector('#my-notes').insertAdjacentHTML("afterbegin", `
+                <li data-id="${results.id}" class="fade-in-calc">
                     <input readonly class="note-title-field" value="${results.title.raw}">
                     <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
                     <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
                     <textarea readonly class="note-body-field">${results.content.raw}</textarea>
                     <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
                 </li>
-            `);
-            console.log("post success");
-            console.log(results);
-        }).catch(err => {
-            console.log("post failed");
-            console.log(err)
-        });
+                `);
+
+                var newNote = document.querySelector("#my-notes li");
+                var newNoteHeight;
+                setTimeout(function() {
+                    newNoteHeight = `${newNote.offsetHeight}px`;
+                    newNote.style.height = "0";
+                }, 20);
+
+                setTimeout(function() {
+                    newNote.classList.remove("fade-in-calc");
+                    newNote.style.height = newNoteHeight;
+                }, 50);
+
+                setTimeout(function() {
+                    newNote.style.removeProperty("height");
+                }, 400);
+
+                console.log("post success");
+                console.log(results);
+            }).catch(err => {
+                console.log("post failed");
+                console.log(err)
+            });
     }
 }
 
