@@ -2,6 +2,18 @@
 
 require get_theme_file_path('/inc/search-route.php');
 
+function unversity_custom_rest() {
+	register_rest_field('post', 'authorName', array(
+		'get_callback' => function() {return get_the_author();}
+	));
+	
+	register_rest_field('note', 'userNoteCount', array(
+		'get_callback' => function() {return count_user_posts(get_current_user_id(), 'note');}
+	));
+}
+
+add_action('rest_api_init', 'unversity_custom_rest');
+
 function page_banner($args = NULL)
 {
 	if (!$args['title']) {
@@ -47,7 +59,7 @@ function university_files()
 	}
 
 	wp_localize_script('main-js', 'universityData', array(
-		'root_url' => get_site_url(), 
+		'root_url' => get_site_url(),
 		'nonce' => wp_create_nonce('wp_rest')
 	));
 }
@@ -243,14 +255,20 @@ function ourLoginTitle()
 add_filter('login_headertitle', 'ourLoginTitle');
 
 // Force note posts to be private 
-add_filter('wp_insert_post_data', 'makeNotePirvate');
-function makeNotePirvate($data) {
+add_filter('wp_insert_post_data', 'makeNotePirvate', 10, 2);
+function makeNotePirvate($data, $postarr)
+{
 	if ($data['post_type'] == 'note') {
+		if (count_user_posts(get_current_user_id(), 'note') > 4 and !$postarr['ID']) {
+			die("{\"error\":\"You have reached your note limit.\"}");
+			//die("You have reached your note limit");
+		}
+
 		$data['post_content'] = sanitize_textarea_field($data['post_content']);
 		$data['post_title'] = sanitize_text_field($data['post_title']);
 	}
 
-	if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash') {
+	if ($data['post_type'] == 'note' and $data['post_status'] != 'trash') {
 		$data['post_status'] = 'private';
 	}
 	return $data;

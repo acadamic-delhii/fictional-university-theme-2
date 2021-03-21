@@ -1,7 +1,9 @@
 class MyNotes {
     constructor() {
-        this.myNotes = document.querySelector("#my-notes");
-        this.events();
+        if (document.querySelector("#my-notes")) {
+            this.myNotes = document.querySelector("#my-notes");
+            this.events();
+        }
     }
 
     events() {
@@ -73,7 +75,7 @@ class MyNotes {
                 'X-WP-Nonce': universityData.nonce
             },
             method: 'DELETE'
-        }).then(resp => {
+        }).then(resp => resp.json()).then(resp => {
             //thisNote.classList.add('fade-out');
             thisNote.style.height = `${thisNote.offsetHeight}px`;
             setTimeout(function () {
@@ -84,6 +86,10 @@ class MyNotes {
             }, 401);
             console.log("delete success");
             console.log(resp);
+
+            if (resp.userNoteCount < 5) {
+                document.querySelector(".note-limit-message").classList.remove("active");
+            }
         }).catch(err => {
             console.log("delete failed");
             console.log(err)
@@ -133,47 +139,47 @@ class MyNotes {
             },
             method: 'POST',
             body: JSON.stringify(ourNewPost)
-        })
-            .then(resp => resp.json())
-            .then(results => {
-                //console.log("breakpoint 1");
-                //console.log(results);
-                //console.log(results.id);
-                //console.log("breakpoint 2");
+        }).then(resp => resp.json()).then(results => {
+            //console.log("breakpoint 1");
+            //console.log(results);
+            //console.log(results.id);
+            //console.log("breakpoint 2");
+
+            if (results.error == "You have reached your note limit.") {
+                console.log("You have reached your note limit.");
+                document.querySelector(".note-limit-message").classList.add("active");
+            } else {
                 document.querySelector('.new-note-title').value = "";
                 document.querySelector('.new-note-body').value = "";
                 document.querySelector('#my-notes').insertAdjacentHTML("afterbegin", `
-                <li data-id="${results.id}" class="fade-in-calc">
-                    <input readonly class="note-title-field" value="${results.title.raw}">
-                    <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
-                    <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
-                    <textarea readonly class="note-body-field">${results.content.raw}</textarea>
-                    <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
-                </li>
-                `);
-
+                    <li data-id="${results.id}" class="fade-in-calc">
+                        <input readonly class="note-title-field" value="${results.title.raw}">
+                        <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
+                        <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
+                        <textarea readonly class="note-body-field">${results.content.raw}</textarea>
+                        <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
+                    </li>
+                    `);
                 var newNote = document.querySelector("#my-notes li");
                 var newNoteHeight;
-                setTimeout(function() {
+                setTimeout(function () {
                     newNoteHeight = `${newNote.offsetHeight}px`;
                     newNote.style.height = "0";
                 }, 20);
-
-                setTimeout(function() {
+                setTimeout(function () {
                     newNote.classList.remove("fade-in-calc");
                     newNote.style.height = newNoteHeight;
                 }, 50);
-
-                setTimeout(function() {
+                setTimeout(function () {
                     newNote.style.removeProperty("height");
                 }, 400);
-
                 console.log("post success");
                 console.log(results);
-            }).catch(err => {
-                console.log("post failed");
-                console.log(err)
-            });
+            }
+        }).catch(err => {
+            console.log("post failed");
+            console.log(err)
+        });
     }
 }
 
