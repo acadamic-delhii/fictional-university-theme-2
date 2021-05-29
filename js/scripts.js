@@ -9,10 +9,10 @@ import MyNotes from "./modules/MyNotes"
 
 
 // Instantiate a new object using our modules/classes
+const search = new Search()
 const mobileMenu = new MobileMenu()
 const heroSlider = new HeroSlider()
 const googleMap = new GoogleMap()
-const search = new Search()
 const myNotes = new MyNotes()
 
 // Allow new JS and CSS to load in browser without a traditional page refresh
