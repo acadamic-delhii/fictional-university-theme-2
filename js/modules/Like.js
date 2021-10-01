@@ -31,13 +31,17 @@ class Like {
         currentLikeBox.setAttribute("data-exists", "yes");
 
         var url = universityData.root_url + '/wp-json/university/v1/manageLike';
+        var data = {
+            professorId: currentLikeBox.getAttribute("data-professor")
+        }
 
         fetch(url, {
             headers: {
                 'X-WP-Nonce': universityData.nonce,
                 'Content-Type': 'application/json'
             },
-            method: 'POST'
+            method: 'POST', 
+            body: JSON.stringify(data)
         })
         .then(res => res.json())
         .then((results) => {
