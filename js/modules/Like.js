@@ -28,8 +28,6 @@ class Like {
     }
 
     createLike(currentLikeBox) {
-        currentLikeBox.setAttribute("data-exists", "yes");
-
         var url = universityData.root_url + '/wp-json/university/v1/manageLike';
         var data = {
             professorId: currentLikeBox.getAttribute("data-professor")
@@ -45,13 +43,14 @@ class Like {
         })
         .then(res => res.json())
         .then((results) => {
+            console.log("Like created successfully. ");
             console.log(results);
+            currentLikeBox.setAttribute("data-exists", "yes");
         })
         .catch(err => console.error(err));
     }
 
     deleteLike(currentLikeBox) {
-        currentLikeBox.setAttribute("data-exists", "no");
 
         var url = universityData.root_url + '/wp-json/university/v1/manageLike';
 
@@ -65,6 +64,7 @@ class Like {
         .then(res => res.json())
         .then((results) => {
             console.log(results);
+            currentLikeBox.setAttribute("data-exists", "no");
         })
         .catch(err => console.error(err));
     }
