@@ -28,11 +28,41 @@ class Like {
     }
 
     createLike(currentLikeBox) {
-        currentLikeBox.setAttribute("data-exists", "yes")
+        currentLikeBox.setAttribute("data-exists", "yes");
+
+        var url = universityData.root_url + '/wp-json/university/v1/manageLike';
+
+        fetch(url, {
+            headers: {
+                'X-WP-Nonce': universityData.nonce,
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then((results) => {
+            console.log(results);
+        })
+        .catch(err => console.error(err));
     }
 
     deleteLike(currentLikeBox) {
-        currentLikeBox.setAttribute("data-exists", "no")
+        currentLikeBox.setAttribute("data-exists", "no");
+
+        var url = universityData.root_url + '/wp-json/university/v1/manageLike';
+
+        fetch(url, {
+            headers: {
+                'X-WP-Nonce': universityData.nonce,
+                'Content-Type': 'application/json'
+            },
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then((results) => {
+            console.log(results);
+        })
+        .catch(err => console.error(err));
     }
 }
 
